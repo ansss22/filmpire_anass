@@ -37,13 +37,12 @@ const Sidebar = ({ setMobileOpen }) => {
   const { genreIdOrCategoryName } = useSelector(
     (state) => state.currentGenreOrCategory
   );
-  
-
-  if (error) return "An error has occured.";
 
   useEffect(() => {
     setMobileOpen(false);
   }, [genreIdOrCategoryName]);
+
+  if (error) return "An error has occured.";
 
   return (
     <>
