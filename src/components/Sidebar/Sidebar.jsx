@@ -18,6 +18,8 @@ import { useGetGenresQuery } from "../../services/TMDB";
 import genreIcons from "../../assets/genres";
 import { selectGenreOrCategory } from "../../features/currentGenreOrCategory";
 
+const genreCategoryIcons = genreIcons;
+
 const blueLogo =
   "https://fontmeme.com/permalink/210930/8531c658a743debe1e1aa1a2fc82006e.png";
 const redLogo =
@@ -29,28 +31,26 @@ const categories = [
   { label: "Upcoming", value: "upcoming" },
 ];
 
-const Sidebar = ({ setMobileOpen }) => {
+
+function Sidebar({ setMobileOpen }) {
   const theme = useTheme();
   const classes = useStyles();
-  const { data, error, isFetching } = useGetGenresQuery();
-  const dispatch = useDispatch();
-  const { genreIdOrCategoryName } = useSelector(
-    (state) => state.currentGenreOrCategory
-  );
+  const { data, isFetching } = useGetGenresQuery();
+
+  const dispatch = useDispatch(); //allows us to dispatch actions
+  const { genreIdOrCategoryName } = useSelector((state) => state.currentGenreOrCategory);
 
   useEffect(() => {
     setMobileOpen(false);
-  }, [genreIdOrCategoryName]);
-
-  if (error) return "An error has occured.";
+  }, [genreIdOrCategoryName, setMobileOpen]);
 
   return (
     <>
-      <Link to="/" className={classes.imageLink}>
+      <Link to="/" className={classes.imageLink}> { /*site logo*/ }
         <img
           className={classes.image}
-          src={theme.palette.mode === "light" ? blueLogo : redLogo}
-          alt="Filmpire"
+          src={theme.palette.mode === 'light' ? blueLogo : redLogo}
+          alt="Filmpire Site Logo"
         />
       </Link>
       <Divider />
@@ -59,15 +59,11 @@ const Sidebar = ({ setMobileOpen }) => {
         {categories.map(({ label, value }) => (
           <Link key={value} className={classes.links} to="/">
             <ListItem
-              onClick={() => dispatch(selectGenreOrCategory(value))}
+              onClick={() => dispatch(selectGenreOrCategory(value))} //notice: typeof value === 'string'
               button
             >
               <ListItemIcon>
-                <img
-                  src={genreIcons[label.toLowerCase()]}
-                  className={classes.genreImage}
-                  height={30}
-                />
+                <img src={genreCategoryIcons[label.toLowerCase()]} className={classes.genreImages} height={30} alt={label} />
               </ListItemIcon>
               <ListItemText primary={label} />
             </ListItem>
@@ -85,15 +81,11 @@ const Sidebar = ({ setMobileOpen }) => {
           data.genres.map(({ name, id }) => (
             <Link key={name} className={classes.links} to="/">
               <ListItem
-                onClick={() => dispatch(selectGenreOrCategory(id))}
+                onClick={() => dispatch(selectGenreOrCategory(id))} //notice: typeof id === 'number'
                 button
               >
                 <ListItemIcon>
-                  <img
-                    src={genreIcons[name.toLowerCase()]}
-                    className={classes.genreImage}
-                    height={30}
-                  />
+                  <img src={genreCategoryIcons[name.toLowerCase()]} className={classes.genreImages} height={30} alt={name} />
                 </ListItemIcon>
                 <ListItemText primary={name} />
               </ListItem>
@@ -103,6 +95,6 @@ const Sidebar = ({ setMobileOpen }) => {
       </List>
     </>
   );
-};
+}
 
 export default Sidebar;
